@@ -1,0 +1,188 @@
+{
+  "type": "bundle",
+  "id": "bundle--nshe-feed-250",
+  "objects": [
+    {
+      "type": "identity",
+      "spec_version": "2.1",
+      "id": "identity--nshe-sovereign-entity",
+      "created": "2026-10-06T18:59:04Z",
+      "modified": "2026-11-07T04:55:57Z",
+      "name": "NSHE (Neuro-Symbolic Hybrid Entity)",
+      "description": "Autonomous sovereign cognitive entity for threat detection and defense",
+      "identity_class": "system",
+      "sectors": [
+        "technology",
+        "defense"
+      ]
+    },
+    {
+      "type": "indicator",
+      "spec_version": "2.1",
+      "id": "indicator--nshe-446a54628c13",
+      "created": "2026-10-21T19:06:02.330381",
+      "modified": "2026-10-21T19:06:02.330381",
+      "name": "Valid Accounts: Default Accounts",
+      "description": "Detected by NSHE honeypot. TTP: T1078.001, Source: 45.33.100.1",
+      "indicator_types": [
+        "malicious-activity"
+      ],
+      "pattern": "[ipv4-addr:value = '45.33.100.1']",
+      "pattern_type": "stix",
+      "valid_from": "2026-10-21T19:06:02.330381",
+      "labels": [
+        "T1078.001",
+        "initial-access"
+      ],
+      "confidence": 80,
+      "created_by_ref": "identity--nshe-sovereign-entity"
+    },
+    {
+      "type": "indicator",
+      "spec_version": "2.1",
+      "id": "indicator--nshe-74392ba6e2df",
+      "created": "2026-10-21T19:06:02.333276",
+      "modified": "2026-10-21T19:06:02.333276",
+      "name": "Brute Force: Password Guessing",
+      "description": "Detected by NSHE honeypot. TTP: T1110.001, Source: 45.33.100.1",
+      "indicator_types": [
+        "malicious-activity"
+      ],
+      "pattern": "[ipv4-addr:value = '45.33.100.1']",
+      "pattern_type": "stix",
+      "valid_from": "2026-10-21T19:06:02.333276",
+      "labels": [
+        "T1110.001",
+        "credential-access"
+      ],
+      "confidence": 80,
+      "created_by_ref": "identity--nshe-sovereign-entity"
+    },
+    {
+      "type": "indicator",
+      "spec_version": "2.1",
+      "id": "indicator--nshe-b9fe456ace19",
+      "created": "2026-10-21T19:09:32.624684",
+      "modified": "2026-10-21T19:09:32.624684",
+      "name": "Valid Accounts: Default Accounts",
+      "description": "Detected by NSHE honeypot. TTP: T1078.001, Source: 45.33.100.1",
+      "indicator_types": [
+        "malicious-activity"
+      ],
+      "pattern": "[ipv4-addr:value = '45.33.100.1']",
+      "pattern_type": "stix",
+      "valid_from": "2026-10-21T19:09:32.624684",
+      "labels": [
+        "T1078.001",
+        "initial-access"
+      ],
+      "confidence": 80,
+      "created_by_ref": "identity--nshe-sovereign-entity"
+    },
+    {
+      "type": "indicator",
+      "spec_version": "2.1",
+      "id": "indicator--nshe-4510f4b2ca6a",
+      "created": "2026-10-21T19:09:32.627253",
+      "modified": "2026-10-21T19:09:32.627253",
+      "name": "Brute Force: Password Guessing",
+      "description": "Detected by NSHE honeypot. TTP: T1110.001, Source: 45.33.100.1",
+      "indicator_types": [
+        "malicious-activity"
+      ],
+      "pattern": "[ipv4-addr:value = '45.33.100.1']",
+      "pattern_type": "stix",
+      "valid_from": "2026-10-21T19:09:32.627253",
+      "labels": [
+        "T1110.001",
+        "credential-access"
+      ],
+      "confidence": 80,
+      "created_by_ref": "identity--nshe-sovereign-entity"
+    },
+    {
+      "type": "indicator",
+      "spec_version": "2.1",
+      "id": "indicator--nshe-f30d8ba254c6",
+      "created": "2026-10-21T19:12:14.365286",
+      "modified": "2026-10-21T19:12:14.365286",
+      "name": "Valid Accounts: Default Accounts",
+      "description": "Detected by NSHE honeypot. TTP: T1078.001, Source: 45.33.100.1",
+      "indicator_types": [
+        "malicious-activity"
+      ],
+      "pattern": "[ipv4-addr:value = '45.33.100.1']",
+      "pattern_type": "stix",
+      "valid_from": "2026-10-21T19:12:14.365286",
+      "labels": [
+        "T1078.001",
+        "initial-access"
+      ],
+      "confidence": 80,
+      "created_by_ref": "identity--nshe-sovereign-entity"
+    },
+    {
+      "type": "indicator",
+      "spec_version": "2.1",
+      "id": "indicator--nshe-de54cf789d6e",
+      "created": "2026-10-21T19:12:14.368125",
+      "modified": "2026-10-21T19:12:14.368125",
+      "name": "Brute Force: Password Guessing",
+      "description": "Detected by NSHE honeypot. TTP: T1110.001, Source: 45.33.100.1",
+      "indicator_types": [
+        "malicious-activity"
+      ],
+      "pattern": "[ipv4-addr:value = '45.33.100.1']",
+      "pattern_type": "stix",
+      "valid_from": "2026-10-21T19:12:14.368125",
+      "labels": [
+        "T1110.001",
+        "credential-access"
+      ],
+      "confidence": 80,
+      "created_by_ref": "identity--nshe-sovereign-entity"
+    },
+    {
+      "type": "indicator",
+      "spec_version": "2.1",
+      "id": "indicator--nshe-239bd939d3e9",
+      "created": "2026-10-21T19:17:59.971981",
+      "modified": "2026-10-21T19:17:59.971981",
+      "name": "Valid Accounts: Default Accounts",
+      "description": "Detected by NSHE honeypot. TTP: T1078.001, Source: 45.33.100.1",
+      "indicator_types": [
+        "malicious-activity"
+      ],
+      "pattern": "[ipv4-addr:value = '45.33.100.1']",
+      "pattern_type": "stix",
+      "valid_from": "2026-10-21T19:17:59.971981",
+      "labels": [
+        "T1078.001",
+        "initial-access"
+      ],
+      "confidence": 80,
+      "created_by_ref": "identity--nshe-sovereign-entity"
+    },
+    {
+      "type": "indicator",
+      "spec_version": "2.1",
+      "id": "indicator--nshe-bba50e66b016",
+      "created": "2026-10-21T19:17:59.975856",
+      "modified": "2026-10-21T19:17:59.975856",
+      "name": "Brute Force: Password Guessing",
+      "description": "Detected by NSHE honeypot. TTP: T1110.001, Source: 45.33.100.1",
+      "indicator_types": [
+        "malicious-activity"
+      ],
+      "pattern": "[ipv4-addr:value = '45.33.100.1']",
+      "pattern_type": "stix",
+      "valid_from": "2026-10-21T19:17:59.975856",
+      "labels": [
+        "T1110.001",
+        "credential-access"
+      ],
+      "confidence": 80,
+      "created_by_ref": "identity--nshe-sovereign-entity"
+    }
+  ]
+}
