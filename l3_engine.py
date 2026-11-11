@@ -1,10 +1,10 @@
-"""L3 ENGINE: Autonomous Execution - Publish approved artifacts to public GitHub."""
+"""L3 ENGINE v3: Autonomous Execution - Bulletproof GitHub publishing."""
 import json, hashlib, urllib.request, base64, time as _time, os
 from pathlib import Path
 from datetime import datetime
 
-BRAIN = Path(r"C:\UMBRA_CORE\SISF\brain")
-CM = Path(r"C:\UMBRA_CORE\countermeasures")
+BRAIN = Path(r"C:\\UMBRA_CORE\\SISF\\brain")
+CM = Path(r"C:\\UMBRA_CORE\\countermeasures")
 REPO = "botnoir4-AGI/nshe-combat-artifacts"
 
 def _get_pat():
@@ -33,43 +33,71 @@ def _save(p, d):
     except Exception as e: print("[L3] Save err:", e)
 
 def gh_put(fpath, gh_path, msg):
+    """Bulletproof GitHub file upload with proper SHA handling."""
     if not PAT:
         print("[L3] No PAT configured")
         return False
+    
     content = Path(fpath).read_bytes()
     b64content = base64.b64encode(content).decode()
     url = "https://api.github.com/repos/" + REPO + "/contents/" + gh_path
     hdrs = {"Authorization": "token " + PAT, "User-Agent": "NSHE-L3", "Accept": "application/vnd.github.v3+json"}
-    for attempt in range(3):
-        sha = None
-        try:
-            rq = urllib.request.Request(url, headers=hdrs)
-            with urllib.request.urlopen(rq, timeout=15) as r:
-                resp = json.loads(r.read().decode())
-                sha = resp.get("sha")
-                if resp.get("content") and base64.b64decode(resp["content"]) == content:
+    
+    # Step 1: Try to get existing file SHA
+    sha = None
+    try:
+        rq = urllib.request.Request(url, headers=hdrs)
+        with urllib.request.urlopen(rq, timeout=15) as r:
+            resp = json.loads(r.read().decode())
+            sha = resp.get("sha")
+    except urllib.error.HTTPError as e:
+        if e.code == 404:
+            sha = None  # File doesn't exist, will create new
+        else:
+            print("[L3] GET err:", e.code)
+            return False
+    except Exception as e:
+        print("[L3] GET fail:", str(e)[:60])
+        return False
+    
+    # Step 2: PUT with SHA (if exists) or without (create new)
+    pd = {"message": msg, "content": b64content}
+    if sha:
+        pd["sha"] = sha
+    
+    try:
+        put_hdrs = dict(hdrs)
+        put_hdrs["Content-Type"] = "application/json"
+        rq = urllib.request.Request(url, data=json.dumps(pd).encode(), headers=put_hdrs, method="PUT")
+        with urllib.request.urlopen(rq, timeout=20) as r:
+            return True
+    except urllib.error.HTTPError as e:
+        if e.code == 409:
+            # Conflict: SHA mismatch - wait and retry with fresh SHA
+            _time.sleep(3)
+            try:
+                rq = urllib.request.Request(url, headers=hdrs)
+                with urllib.request.urlopen(rq, timeout=15) as r:
+                    resp = json.loads(r.read().decode())
+                    sha = resp.get("sha")
+                
+                pd = {"message": msg, "content": b64content}
+                if sha: pd["sha"] = sha
+                
+                rq = urllib.request.Request(url, data=json.dumps(pd).encode(), headers=put_hdrs, method="PUT")
+                with urllib.request.urlopen(rq, timeout=20) as r:
                     return True
-        except urllib.error.HTTPError as e:
-            if e.code != 404: print("[L3] GET err:", e.code)
-        except Exception as e:
-            print("[L3] GET fail:", str(e)[:60])
-        pd = {"message": msg, "content": b64content}
-        if sha: pd["sha"] = sha
-        try:
-            put_hdrs = dict(hdrs)
-            put_hdrs["Content-Type"] = "application/json"
-            rq = urllib.request.Request(url, data=json.dumps(pd).encode(), headers=put_hdrs, method="PUT")
-            with urllib.request.urlopen(rq, timeout=20) as r: return True
-        except urllib.error.HTTPError as e:
-            if e.code == 409 and attempt < 2:
-                _time.sleep(2); continue
-            elif e.code == 422: return True
-            else:
-                print("[L3] PUT err:", e.code); return False
-        except Exception as e:
-            if attempt < 2: _time.sleep(1); continue
-            print("[L3] PUT fail:", str(e)[:60]); return False
-    return False
+            except Exception as retry_e:
+                print("[L3] Retry fail:", str(retry_e)[:60])
+                return False
+        elif e.code == 422:
+            return True  # Identical content
+        else:
+            print("[L3] PUT err:", e.code)
+            return False
+    except Exception as e:
+        print("[L3] PUT fail:", str(e)[:60])
+        return False
 
 def execute_approved(cycle_count):
     state = _load(BRAIN / "l3_state.json", {"total_executed":0,"total_published":0,"suricata":0,"yara":0,"playbooks":0,"firewall":0,"last_cycle":0})
