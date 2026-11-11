@@ -1,0 +1,12 @@
+{
+  "original_path": "C:\\UMBRA_CORE\\countermeasures\\staging\\yara_T1083_3b39b92e_20261107_045129.yar",
+  "artifact_type": "yara_signature",
+  "validation_passed": true,
+  "errors": [],
+  "warnings": [],
+  "confidence": 0.91,
+  "decision": "AUTO_APPROVED",
+  "source_ip": "unknown",
+  "cycle": 249,
+  "timestamp": "2026-11-07T04:51:29.289813"
+}
