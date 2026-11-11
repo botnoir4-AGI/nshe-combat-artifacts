@@ -1,0 +1,12 @@
+{
+  "original_path": "C:\\UMBRA_CORE\\countermeasures\\staging\\playbook_T1078.001_45_33_100_1_20261106_123656.md",
+  "artifact_type": "incident_playbook",
+  "validation_passed": true,
+  "errors": [],
+  "warnings": [],
+  "confidence": 0.96,
+  "decision": "AUTO_APPROVED",
+  "source_ip": "unknown",
+  "cycle": 1,
+  "timestamp": "2026-11-06T12:38:29.457352"
+}
