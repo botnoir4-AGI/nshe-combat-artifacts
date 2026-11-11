@@ -1,10 +1,11 @@
-"""PRECISION YARA: tight payload-derived hex indicators; dedup; per-payload TP/FP."""
+"""PRECISION YARA v2: tight hex indicators; dedup; per-payload TP/FP."""
 import json, hashlib
 from pathlib import Path
 BRAIN = Path("C:/UMBRA_CORE/SISF/brain")
 CM = Path("C:/UMBRA_CORE/countermeasures")
 CURATED = CM / "curated_yara"
 NL = chr(10)
+Q = chr(34)
 def _load(p,d=None):
     if d is None:d={}
     try:
@@ -43,7 +44,7 @@ def generate_curated():
             seen.add(key)
             hexs=" ".join("%02x"%b for b in raw)
             name="nshe_"+ttp.replace(".","_")+"_"+hashlib.md5(raw).hexdigest()[:8]
-            rule="rule "+name+" {"+NL+"  meta:"+NL+"    ttp = ""+ttp+"""+NL+"  strings:"+NL+"    $a = { "+hexs+" }"+NL+"  condition:"+NL+"    $a"+NL+"}"+NL
+            rule="rule "+name+" {"+NL+"  meta:"+NL+"    ttp = "+Q+ttp+Q+NL+"  strings:"+NL+"    $a = { "+hexs+" }"+NL+"  condition:"+NL+"    $a"+NL+"}"+NL
             (CURATED/(name+".yar")).write_text(rule,encoding="utf-8")
             n+=1
     return n
