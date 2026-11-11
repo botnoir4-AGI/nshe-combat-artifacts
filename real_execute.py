@@ -1,4 +1,4 @@
-"""REAL EXECUTION: run YARA scans, Suricata rule tests, safe firewall apply. Real TP/FP."""
+"""REAL EXECUTION v2: YARA real-scan on REAL payloads + payload-derived rules, Suricata -T, safe firewall."""
 import json, re, shutil, subprocess, ipaddress, time as _time
 from pathlib import Path
 from datetime import datetime
@@ -8,6 +8,7 @@ CM = Path("C:/UMBRA_CORE/countermeasures")
 FEEDBACK = BRAIN / "real_feedback.json"
 REPORT = BRAIN / "real_exec_report.txt"
 FW_LOG = BRAIN / "firewall_applied.json"
+DERIVED = CM / "derived_yara"
 WHITELIST = [ipaddress.ip_network(n) for n in
     ["127.0.0.0/8","10.0.0.0/8","172.16.0.0/12","192.168.0.0/16","169.254.0.0/16","0.0.0.0/8"]]
 
@@ -25,8 +26,14 @@ def is_external(ip):
         a=ipaddress.ip_address(ip);return not any(a in n for n in WHITELIST)
     except:return False
 
+def defeat_log():
+    return _load(BRAIN/"combat_record.json",{}).get("defeat_log",[])
+
 def build_corpus():
     c=[]
+    for e in defeat_log():
+        t=e.get("payload_preview","") or e.get("event_payload","")
+        if t:c.append((e.get("ttp_id",""),t.encode("utf-8",errors="replace")))
     hp=_load(BRAIN/"honeypot_events.json",{})
     for e in (hp.get("events",[]) if isinstance(hp,dict) else []):
         t=(e.get("body_preview","")+" "+e.get("path","")+" "+e.get("user_agent",""))
@@ -36,6 +43,23 @@ def build_corpus():
             for f in sd.glob("*"):
                 if f.is_file():c.append(("",f.read_bytes()))
     return c
+
+def derive_yara_from_payloads():
+    """Generate YARA rules from REAL observed payload indicators (hex strings)."""
+    DERIVED.mkdir(parents=True,exist_ok=True)
+    n=0;seen=set()
+    for e in defeat_log():
+        t=(e.get("payload_preview","") or "").strip()
+        if not t or t in seen:continue
+        seen.add(t)
+        raw=t.encode("utf-8",errors="replace")[:64]
+        hexs=" ".join(f"{b:02x}" for b in raw)
+        ttp=e.get("ttp_id","T0000").replace(".","_")
+        name=f"nshe_derived_{ttp}_{e.get('id','x')[:8]}"
+        rule=f'rule {name} {{\n  meta:\n    ttp = "{e.get("ttp_id","")}"\n    source = "real_payload"\n  strings:\n    $a = {{ {hexs} }}\n  condition:\n    $a\n}}\n'
+        (DERIVED/f"{name}.yar").write_text(rule,encoding="utf-8")
+        n+=1
+    return n
 
 def yara_scan():
     try:import yara
@@ -57,8 +81,9 @@ def yara_scan():
             if hits:
                 if label and rt and label.startswith(rt.split(".")[0]):ms+=1
                 else:md+=1
-        tp+=ms;fp+=md;details.append({"rule":yar.name,"ttp":rt,"tp":ms,"fp":md})
-    return {"engine":"yara","available":True,"tp":tp,"fp":fp,"tested":tested,"details":details[:50]}
+        tp+=ms;fp+=md
+        if ms or md:details.append({"rule":yar.name,"ttp":rt,"tp":ms,"fp":md})
+    return {"engine":"yara","available":True,"tp":tp,"fp":fp,"tested":tested,"corpus":len(corpus),"details":details[:50]}
 
 def suricata_test():
     b=shutil.which("suricata")
@@ -75,10 +100,9 @@ def suricata_test():
 def firewall_apply(rollback_seconds=900):
     b=shutil.which("netsh")
     if not b:return {"engine":"firewall","available":False}
-    cr=_load(BRAIN/"combat_record.json",{});applied=_load(FW_LOG,{"applied":[]})
-    done={a["ip"] for a in applied["applied"]};res=[]
-    for e in cr.get("defeat_log",[]):
-        ip=e.get("source_ip","");sev=e.get("severity","")
+    applied=_load(FW_LOG,{"applied":[]});done={a["ip"] for a in applied["applied"]};res=[]
+    for e in defeat_log():
+        ip=e.get("source_ip","");sev=e.get("threat_level","") or e.get("severity","")
         if not is_external(ip) or ip in done or sev not in ("HIGH","CRITICAL"):continue
         name="NSHE-BLOCK-"+ip.replace(".","_")
         try:
@@ -91,9 +115,10 @@ def firewall_apply(rollback_seconds=900):
     return {"engine":"firewall","available":True,"actions":res}
 
 def run_real_execution():
+    derived=derive_yara_from_payloads()
     y=yara_scan();s=suricata_test();f=firewall_apply()
     fb=_load(FEEDBACK,{"history":[]})
-    entry={"ts":datetime.now().isoformat(),"yara":{k:v for k,v in y.items() if k!="details"},"suricata":s,"firewall":f}
+    entry={"ts":datetime.now().isoformat(),"derived_rules":derived,"yara":{k:v for k,v in y.items() if k!="details"},"suricata":s,"firewall":f}
     fb["history"]=fb.get("history",[])[-100:]+[entry]
     fb["real_tp"]=y.get("tp",0);fb["real_fp"]=y.get("fp",0);_save(FEEDBACK,fb)
     if y.get("available"):
@@ -101,7 +126,8 @@ def run_real_execution():
         l2["true_positives"]=y.get("tp",0);l2["false_positives"]=y.get("fp",0)
         l2["feedback_seeded"]=False;l2["feedback_source"]="real_yara_scan"
         _save(BRAIN/"l2_state.json",l2)
-    lines=["=== REAL EXECUTION REPORT "+datetime.now().isoformat()+" ===",
+    lines=["=== REAL EXECUTION REPORT v2 "+datetime.now().isoformat()+" ===",
+        "[DERIVED] payload-derived YARA rules: "+str(derived),
         "[YARA] "+json.dumps({k:v for k,v in y.items() if k!="details"}),
         "[SURICATA] "+json.dumps(s),
         "[FIREWALL] "+json.dumps(f)]
