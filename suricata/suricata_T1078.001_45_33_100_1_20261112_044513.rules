@@ -1,0 +1,3 @@
+# NSHE Suricata Rule | Cycle 15 | 2026-11-12T04:45:13.092488
+# TTP: T1078.001 (Valid Accounts: Default Accounts) | Tactic: Initial Access | Severity: MEDIUM
+alert ip 45.33.100.1 any -> $HOME_NET any (msg:"NSHE: Valid Accounts: Default Accounts [T1078.001]"; sid:9079782; rev:1; priority:1; classtype:attempted-admin;)
