@@ -1,0 +1,3 @@
+# NSHE Suricata Rule | Cycle 16 | 2026-11-12T04:49:58.963552
+# TTP: T1083 (File and Directory Discovery) | Tactic: Discovery | Severity: MEDIUM
+alert ip 192.168.1.50 any -> $HOME_NET any (msg:"NSHE: File and Directory Discovery [T1083]"; sid:9031838; rev:1; priority:1; classtype:attempted-admin;)
