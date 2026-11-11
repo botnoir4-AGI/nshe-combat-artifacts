@@ -1,0 +1,3 @@
+# NSHE Suricata Rule | Cycle 277 | 2026-11-07T06:37:36.576012
+# TTP: T1190 (Exploit Public-Facing Application) | Tactic: Initial Access | Severity: MEDIUM
+alert ip 192.168.1.50 any -> $HOME_NET any (msg:"NSHE: Exploit Public-Facing Application [T1190]"; sid:9089250; rev:1; priority:1; classtype:attempted-admin;)
