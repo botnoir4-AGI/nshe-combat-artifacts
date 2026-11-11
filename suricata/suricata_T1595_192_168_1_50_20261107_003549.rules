@@ -1,0 +1,3 @@
+# NSHE Suricata Rule | Cycle 182 | 2026-11-07T00:35:49.399604
+# TTP: T1595 (Active Scanning) | Tactic: Reconnaissance | Severity: MEDIUM
+alert ip 192.168.1.50 any -> $HOME_NET any (msg:"NSHE: Active Scanning [T1595]"; sid:9064313; rev:1; priority:1; classtype:attempted-admin;)
