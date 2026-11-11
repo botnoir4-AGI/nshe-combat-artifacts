@@ -1,0 +1,12 @@
+/* NSHE YARA | Cycle 149 | T1083 (File and Directory Discovery) */
+rule nshe_T1083_d004ef3e {
+    meta:
+        author = "NSHE-AUTARCH"
+        ttp = "T1083"
+        severity = "MEDIUM"
+    strings:
+        $traversal = /\.\.[\/]/ ascii
+        $cmdi = "/etc/passwd" ascii
+    condition:
+        any of them
+}
