@@ -1,0 +1,12 @@
+{
+  "original_path": "C:\\UMBRA_CORE\\countermeasures\\staging\\suricata_T1595_192_168_1_50_20261106_231221.rules",
+  "artifact_type": "suricata_rule",
+  "validation_passed": true,
+  "errors": [],
+  "warnings": [],
+  "confidence": 0.91,
+  "decision": "AUTO_APPROVED",
+  "source_ip": "unknown",
+  "cycle": 161,
+  "timestamp": "2026-11-06T23:12:21.963271"
+}
