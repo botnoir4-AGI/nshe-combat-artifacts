@@ -1,0 +1,3 @@
+# NSHE Suricata Rule | Cycle 1 | 2026-11-12T15:02:26.124977
+# TTP: T1589.002 (T1589.002) | Tactic: Initial Access | Severity: MEDIUM
+alert ip 45.155.205.233 any -> $HOME_NET any (msg:"NSHE: T1589.002 [T1589.002]"; sid:9098186; rev:1; priority:1; classtype:attempted-admin;)
