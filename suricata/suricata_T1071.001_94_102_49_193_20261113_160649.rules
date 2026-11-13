@@ -1,0 +1,3 @@
+# NSHE Suricata Rule | Cycle 1 | 2026-11-13T16:06:49.395302
+# TTP: T1071.001 (Reported malicious C2/scanner IP) | Tactic: Command and Control | Severity: MEDIUM
+alert ip 94.102.49.193 any -> $HOME_NET any (msg:"NSHE: Reported malicious C2/scanner IP [T1071.001]"; sid:9057807; rev:1; priority:1; classtype:attempted-admin;)
